@@ -4,7 +4,7 @@ import os
 import concurrent.futures
 from itertools import combinations
 
-
+# download the data
 def openFiles(ggp_file, om_file):
     with open(ggp_file, 'r') as file:
         ggp_data = json.load(file)
@@ -13,7 +13,7 @@ def openFiles(ggp_file, om_file):
 
     return[ggp_data, om_data]
 
-
+# re-format the data into attack pairs
 def formatData(files):
     data = []
     for jsonFile in files:
@@ -29,44 +29,39 @@ files = openFiles('ggp_results.json', 'om_results.json')
 ggp, om = formatData(files)
 
 
-# Example function to run multiple deployments in parallel
 def run_multiple_deployments():
     results = {}  
     # Arguments for each deployment call (you may have many different combinations)
     args_list = [
-        # (ggp, 'gca-p', 2, 7),
-        # (ggp, 'gca-p', 2, 6),  
-        # (ggp, 'gca-p', 1, 5),
-        # (om, 'mpic', 2, 7),
-        # (om, 'mpic', 2, 6),
-        # (om, 'mpic', 1, 5)
+        (ggp, 'gca-p', 2, 7),
+        (ggp, 'gca-p', 2, 6),  
+        (ggp, 'gca-p', 1, 5),
+        (om, 'mpic', 2, 7),
+        (om, 'mpic', 2, 6),
+        (om, 'mpic', 1, 5)
     ]
 
-    # Use ProcessPoolExecutor to parallelize the calls to bestDeployments
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     futures = [
-    #         executor.submit(aa.bestDeployments, *args)
-    #         for args in args_list
-    #     ]
+    Use ProcessPoolExecutor to parallelize the calls to bestDeployments
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [
+            executor.submit(aa.bestDeployments, *args)
+            for args in args_list
+        ]
         
-    #     results = [future.result() for future in futures]
+        results = [future.result() for future in futures]
 
-    # return results
-    # results = aa.bestDeployments(ggp, 'gca-p', 2, 7)
-    # return results
+    return results
 
 
 print('Finding Best Sets from Each')
 
 
-# Run the parallel function calls
-# all_results = run_multiple_deployments()
-if __name__ == '__main__':
-    all_results = aa.bestDeployments(ggp, 'gca-p', 1, 5)
-    # all_results = aa.bestDeployments(om, 'mpic', 1, 5)
+# run the parallel function calls
+all_results = run_multiple_deployments()
 
-    # Print the results
+if __name__ == '__main__':
+
+    # print the results
     with open('results.txt', 'w') as f:
         for result in all_results:
-            # Assuming `result` is a list or tuple, join it into a string
             f.write(str(result) + '\n')
