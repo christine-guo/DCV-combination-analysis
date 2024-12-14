@@ -31,7 +31,7 @@ ggp, om = formatData(files)
 
 def run_multiple_deployments():
     results = {}  
-    # Arguments for each deployment call (you may have many different combinations)
+    # arguments for each deployment call 
     args_list = [
         (ggp, 'gca-p', 2, 7),
         (ggp, 'gca-p', 2, 6),  
@@ -41,6 +41,7 @@ def run_multiple_deployments():
         (om, 'mpic', 1, 5)
     ]
 
+    # run each call in parallel
     Use ProcessPoolExecutor to parallelize the calls to bestDeployments
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [
